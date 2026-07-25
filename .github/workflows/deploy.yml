@@ -13,17 +13,25 @@ jobs:
       - name: Checkout site files
         uses: actions/checkout@v4
 
-      - name: Deploy to Plesk via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Stage clean upload folder (exclude git/workflow/readme)
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='_site' \
+            --exclude='.gitignore' \
+            --exclude='README.md' \
+            ./ _site/
+          echo "Files staged for upload:"; find _site -type f | wc -l
+
+      - name: Deploy to Plesk via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server:   ${{ secrets.FTP_HOST }}      # e.g. ftp.paddockshotel.com
-          username: ${{ secrets.FTP_USERNAME }}  # your Plesk FTP user
-          password: ${{ secrets.FTP_PASSWORD }}  # your Plesk FTP password
-          protocol: ftps                          # secure FTP (recommended by Plesk)
-          # Upload everything in the repo EXCEPT git + workflow files
-          server-dir: ./httpdocs/                 # Plesk web root — change if yours differs
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            README.md
+          server:      ${{ secrets.FTP_HOST }}
+          username:    ${{ secrets.FTP_USERNAME }}
+          password:    ${{ secrets.FTP_PASSWORD }}
+          port:        22
+          local_path:  './_site/*'
+          remote_path: '/httpdocs'
+          sftp_only:   true
