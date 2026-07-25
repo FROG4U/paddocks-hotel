@@ -336,7 +336,43 @@ if(e)
 					}
 				}
 			</style>
-			</head>
+			<style id="paddocks-menu-fix">
+/* --- Menu fix for static copy: desktop hover dropdown + mobile toggle (JS-independent) --- */
+@media (min-width:1025px){
+  .elementor-nav-menu--main .menu-item-has-children{position:relative;}
+  .elementor-nav-menu--main .menu-item-has-children > ul.sub-menu{
+    display:block !important;position:absolute;top:100%;inset-inline-start:0;min-width:210px;
+    opacity:0;visibility:hidden;transform:translateY(8px);pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease,visibility .18s;
+    box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:9999;
+  }
+  .elementor-nav-menu--main .menu-item-has-children:hover > ul.sub-menu{
+    opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
+  }
+}
+/* Mobile: reveal cloned dropdown menu when toggled, with sub-menus expanded */
+nav.elementor-nav-menu--dropdown.paddocks-open{display:block !important;}
+nav.elementor-nav-menu--dropdown.paddocks-open .sub-menu{display:block !important;}
+</style>
+<script id="paddocks-menu-js">
+(function(){
+  function ready(fn){document.readyState!=='loading'?fn():document.addEventListener('DOMContentLoaded',fn);}
+  ready(function(){
+    document.querySelectorAll('.elementor-menu-toggle').forEach(function(tog){
+      var scope=tog.closest('[data-widget_type]')||document;
+      var dd=scope.querySelector('nav.elementor-nav-menu--dropdown');
+      tog.addEventListener('click',function(e){
+        e.preventDefault();e.stopPropagation();
+        var open=tog.getAttribute('aria-expanded')==='true';
+        tog.setAttribute('aria-expanded',String(!open));
+        tog.classList.toggle('elementor-active',!open);
+        if(dd)dd.classList.toggle('paddocks-open',!open);
+      });
+    });
+  });
+})();
+</script>
+</head>
 <body class="wp-singular page-template-default page page-id-385 wp-custom-logo wp-theme-hello-biz unselectable ehbiz-default elementor-default elementor-kit-8 elementor-page elementor-page-385">
 		<header data-elementor-type="header" data-elementor-id="134" class="elementor elementor-134 elementor-location-header" data-elementor-post-type="elementor_library">
 			<div class="elementor-element elementor-element-51f2c52 e-flex e-con-boxed e-con e-parent" data-id="51f2c52" data-element_type="container" data-e-type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
