@@ -1,0 +1,29 @@
+name: Deploy to Plesk
+
+# Runs automatically on every push to main — i.e. every time the site is updated.
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:   # allows a manual "Run workflow" button in GitHub
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site files
+        uses: actions/checkout@v4
+
+      - name: Deploy to Plesk via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_HOST }}      # e.g. ftp.paddockshotel.com
+          username: ${{ secrets.FTP_USERNAME }}  # your Plesk FTP user
+          password: ${{ secrets.FTP_PASSWORD }}  # your Plesk FTP password
+          protocol: ftps                          # secure FTP (recommended by Plesk)
+          # Upload everything in the repo EXCEPT git + workflow files
+          server-dir: ./httpdocs/                 # Plesk web root — change if yours differs
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            README.md
